@@ -13,7 +13,10 @@ from vint_train.visualizing.visualize_utils import to_numpy, from_numpy
 from vint_train.training.logger import Logger
 from vint_train.data.data_utils import VISUALIZATION_IMAGE_SIZE
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
-from diffusers.training_utils import EMAModel
+
+import sys
+sys.path.append(r"D:\visualnav-transformer\diffusion_policy\diffusion_policy\model\diffusion")
+from ema_model import EMAModel  # Import the class
 
 import torch
 import torch.nn as nn
@@ -538,7 +541,7 @@ def train_nomad(
     wandb_log_freq: int = 10,
     image_log_freq: int = 1000,
     num_images_log: int = 8,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
 ):
     """
     Train the model for one epoch.
@@ -657,7 +660,7 @@ def train_nomad(
 
             # Optimize
             optimizer.zero_grad()
-            loss.backward()
+            #loss.backward()
             optimizer.step()
 
             # Update Exponential Moving Average of the model weights
@@ -666,56 +669,56 @@ def train_nomad(
             # Logging
             loss_cpu = loss.item()
             tepoch.set_postfix(loss=loss_cpu)
-            wandb.log({"total_loss": loss_cpu})
-            wandb.log({"dist_loss": dist_loss.item()})
-            wandb.log({"diffusion_loss": diffusion_loss.item()})
+            #wandb.log({"total_loss": loss_cpu})
+            #wandb.log({"dist_loss": dist_loss.item()})
+            #wandb.log({"diffusion_loss": diffusion_loss.item()})
 
 
-            if i % print_log_freq == 0:
-                losses = _compute_losses_nomad(
-                            ema_model.averaged_model,
-                            noise_scheduler,
-                            batch_obs_images,
-                            batch_goal_images,
-                            distance.to(device),
-                            actions.to(device),
-                            device,
-                            action_mask.to(device),
-                        )
+            # if i % print_log_freq == 0:
+            #     losses = _compute_losses_nomad(
+            #                 ema_model.averaged_model,
+            #                 noise_scheduler,
+            #                 batch_obs_images,
+            #                 batch_goal_images,
+            #                 distance.to(device),
+            #                 actions.to(device),
+            #                 device,
+            #                 action_mask.to(device),
+            #             )
                 
-                for key, value in losses.items():
-                    if key in loggers:
-                        logger = loggers[key]
-                        logger.log_data(value.item())
+            #     for key, value in losses.items():
+            #         if key in loggers:
+            #             logger = loggers[key]
+            #             logger.log_data(value.item())
             
-                data_log = {}
-                for key, logger in loggers.items():
-                    data_log[logger.full_name()] = logger.latest()
-                    if i % print_log_freq == 0 and print_log_freq != 0:
-                        print(f"(epoch {epoch}) (batch {i}/{num_batches - 1}) {logger.display()}")
+            #     data_log = {}
+            #     for key, logger in loggers.items():
+            #         data_log[logger.full_name()] = logger.latest()
+            #         if i % print_log_freq == 0 and print_log_freq != 0:
+            #             print(f"(epoch {epoch}) (batch {i}/{num_batches - 1}) {logger.display()}")
 
-                if use_wandb and i % wandb_log_freq == 0 and wandb_log_freq != 0:
-                    wandb.log(data_log, commit=True)
+            #     if use_wandb and i % wandb_log_freq == 0 and wandb_log_freq != 0:
+            #         wandb.log(data_log, commit=True)
 
-            if image_log_freq != 0 and i % image_log_freq == 0:
-                visualize_diffusion_action_distribution(
-                    ema_model.averaged_model,
-                    noise_scheduler,
-                    batch_obs_images,
-                    batch_goal_images,
-                    batch_viz_obs_images,
-                    batch_viz_goal_images,
-                    actions,
-                    distance,
-                    goal_pos,
-                    device,
-                    "train",
-                    project_folder,
-                    epoch,
-                    num_images_log,
-                    30,
-                    use_wandb,
-                )
+            # if image_log_freq != 0 and i % image_log_freq == 0:
+            #     visualize_diffusion_action_distribution(
+            #         ema_model.averaged_model,
+            #         noise_scheduler,
+            #         batch_obs_images,
+            #         batch_goal_images,
+            #         batch_viz_obs_images,
+            #         batch_viz_goal_images,
+            #         actions,
+            #         distance,
+            #         goal_pos,
+            #         device,
+            #         "train",
+            #         project_folder,
+            #         epoch,
+            #         num_images_log,
+            #         30,
+            #         use_wandb,
+            #     )
 
 
 def evaluate_nomad(
@@ -733,7 +736,7 @@ def evaluate_nomad(
     image_log_freq: int = 1000,
     num_images_log: int = 8,
     eval_fraction: float = 0.25,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
 ):
     """
     Evaluate the model on the given evaluation dataset.
@@ -870,9 +873,9 @@ def evaluate_nomad(
             loss_cpu = rand_mask_loss.item()
             tepoch.set_postfix(loss=loss_cpu)
 
-            wandb.log({"diffusion_eval_loss (random masking)": rand_mask_loss})
-            wandb.log({"diffusion_eval_loss (no masking)": no_mask_loss})
-            wandb.log({"diffusion_eval_loss (goal masking)": goal_mask_loss})
+            # wandb.log({"diffusion_eval_loss (random masking)": rand_mask_loss})
+            # wandb.log({"diffusion_eval_loss (no masking)": no_mask_loss})
+            # wandb.log({"diffusion_eval_loss (goal masking)": goal_mask_loss})
 
             if i % print_log_freq == 0 and print_log_freq != 0:
                 losses = _compute_losses_nomad(
@@ -897,8 +900,8 @@ def evaluate_nomad(
                     if i % print_log_freq == 0 and print_log_freq != 0:
                         print(f"(epoch {epoch}) (batch {i}/{num_batches - 1}) {logger.display()}")
 
-                if use_wandb and i % wandb_log_freq == 0 and wandb_log_freq != 0:
-                    wandb.log(data_log, commit=True)
+                # if use_wandb and i % wandb_log_freq == 0 and wandb_log_freq != 0:
+                #     wandb.log(data_log, commit=True)
 
             if image_log_freq != 0 and i % image_log_freq == 0:
                 visualize_diffusion_action_distribution(
@@ -1169,9 +1172,9 @@ def visualize_diffusion_action_distribution(
 
         save_path = os.path.join(visualize_path, f"sample_{i}.png")
         plt.savefig(save_path)
-        wandb_list.append(wandb.Image(save_path))
+        # wandb_list.append(wandb.Image(save_path))
         plt.close(fig)
-    if len(wandb_list) > 0 and use_wandb:
-        wandb.log({f"{eval_type}_action_samples": wandb_list}, commit=False)
+    # if len(wandb_list) > 0 and use_wandb:
+    #     wandb.log({f"{eval_type}_action_samples": wandb_list}, commit=False)
 
 

@@ -26,12 +26,14 @@ def get_data_path(data_folder: str, f: str, time: int, data_type: str = "image")
 
 
 def yaw_rotmat(yaw: float) -> np.ndarray:
+    yaw = float(yaw)  # Ensure yaw is a float
     return np.array(
         [
             [np.cos(yaw), -np.sin(yaw), 0.0],
             [np.sin(yaw), np.cos(yaw), 0.0],
             [0.0, 0.0, 1.0],
         ],
+        dtype=np.float32,  # Explicitly set the dtype to float
     )
 
 

@@ -15,7 +15,11 @@ from torch.optim import Adam
 from torchvision import transforms
 
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
-from diffusers.training_utils import EMAModel
+
+
+import sys
+sys.path.append(r"D:\visualnav-transformer\diffusion_policy\diffusion_policy\model\diffusion")
+from ema_model import EMAModel  # Import the class
 
 def train_eval_loop(
     train_model: bool,
@@ -36,7 +40,7 @@ def train_eval_loop(
     current_epoch: int = 0,
     alpha: float = 0.5,
     learn_angle: bool = True,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
     eval_fraction: float = 0.25,
 ):
     """
@@ -123,7 +127,7 @@ def train_eval_loop(
             "scheduler": scheduler
         }
         # log average eval loss
-        wandb.log({}, commit=False)
+        #wandb.log({}, commit=False)
 
         if scheduler is not None:
             # scheduler calls based on the type of scheduler
@@ -131,17 +135,17 @@ def train_eval_loop(
                 scheduler.step(np.mean(avg_total_test_loss))
             else:
                 scheduler.step()
-        wandb.log({
-            "avg_total_test_loss": np.mean(avg_total_test_loss),
-            "lr": optimizer.param_groups[0]["lr"],
-        }, commit=False)
+        # wandb.log({
+        #     "avg_total_test_loss": np.mean(avg_total_test_loss),
+        #     "lr": optimizer.param_groups[0]["lr"],
+        # }, commit=False)
 
         numbered_path = os.path.join(project_folder, f"{epoch}.pth")
         torch.save(checkpoint, latest_path)
         torch.save(checkpoint, numbered_path)  # keep track of model at every epoch
 
     # Flush the last set of eval logs
-    wandb.log({})
+    #wandb.log({})
     print()
 
 def train_eval_loop_nomad(
@@ -163,7 +167,7 @@ def train_eval_loop_nomad(
     num_images_log: int = 8,
     current_epoch: int = 0,
     alpha: float = 1e-4,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
     eval_fraction: float = 0.25,
     eval_freq: int = 1,
 ):
@@ -193,7 +197,8 @@ def train_eval_loop_nomad(
         eval_freq: frequency of evaluation
     """
     latest_path = os.path.join(project_folder, f"latest.pth")
-    ema_model = EMAModel(model=model,power=0.75)
+    #ema_model = EMAModel(parameters=model.parameters(), power=0.75)
+    ema_model = EMAModel(model=model, power=0.75)
     
     for epoch in range(current_epoch, current_epoch + epochs):
         if train_model:
@@ -221,6 +226,7 @@ def train_eval_loop_nomad(
             lr_scheduler.step()
 
         numbered_path = os.path.join(project_folder, f"ema_{epoch}.pth")
+        #torch.save(ema_model.state_dict(), numbered_path)     
         torch.save(ema_model.averaged_model.state_dict(), numbered_path)
         numbered_path = os.path.join(project_folder, f"ema_latest.pth")
         print(f"Saved EMA model to {numbered_path}")
@@ -263,23 +269,23 @@ def train_eval_loop_nomad(
                     use_wandb=use_wandb,
                     eval_fraction=eval_fraction,
                 )
-        wandb.log({
-            "lr": optimizer.param_groups[0]["lr"],
-        }, commit=False)
+        # wandb.log({
+        #     "lr": optimizer.param_groups[0]["lr"],
+        # }, commit=False)
 
         if lr_scheduler is not None:
             lr_scheduler.step()
 
         # log average eval loss
-        wandb.log({}, commit=False)
+        # wandb.log({}, commit=False)
 
-        wandb.log({
-            "lr": optimizer.param_groups[0]["lr"],
-        }, commit=False)
+        # wandb.log({
+        #     "lr": optimizer.param_groups[0]["lr"],
+        # }, commit=False)
 
         
     # Flush the last set of eval logs
-    wandb.log({})
+    #wandb.log({})
     print()
 
 def load_model(model, model_type, checkpoint: dict) -> None:

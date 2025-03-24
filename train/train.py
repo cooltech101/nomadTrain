@@ -49,6 +49,10 @@ def main(config):
         os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(
             [str(x) for x in config["gpu_ids"]]
         )
+
+        #torch.cuda.set_per_process_memory_fraction(0.7, device=0)
+        #PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True 
+
         print("Using cuda devices:", os.environ["CUDA_VISIBLE_DEVICES"])
     else:
         print("Using cpu")
@@ -175,15 +179,15 @@ def main(config):
                 mha_ff_dim_factor=config["mha_ff_dim_factor"],
             )
             vision_encoder = replace_bn_with_gn(vision_encoder)
-        elif config["vision_encoder"] == "vib": 
-            vision_encoder = ViB(
-                obs_encoding_size=config["encoding_size"],
-                context_size=config["context_size"],
-                mha_num_attention_heads=config["mha_num_attention_heads"],
-                mha_num_attention_layers=config["mha_num_attention_layers"],
-                mha_ff_dim_factor=config["mha_ff_dim_factor"],
-            )
-            vision_encoder = replace_bn_with_gn(vision_encoder)
+        # elif config["vision_encoder"] == "vib": 
+        #     vision_encoder = ViB(
+        #         obs_encoding_size=config["encoding_size"],
+        #         context_size=config["context_size"],
+        #         mha_num_attention_heads=config["mha_num_attention_heads"],
+        #         mha_num_attention_layers=config["mha_num_attention_layers"],
+        #         mha_ff_dim_factor=config["mha_ff_dim_factor"],
+        #     )
+        #     vision_encoder = replace_bn_with_gn(vision_encoder)
         elif config["vision_encoder"] == "vit": 
             vision_encoder = ViT(
                 obs_encoding_size=config["encoding_size"],
