@@ -150,7 +150,33 @@ Convert to ROS1 format
 rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 ```
 
-Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits`. 
+Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits`. Move the results of process_bags.py to this folder. The structure should be as follows:
+```
+├── <dataset_name>
+│   ├── <name_of_traj1>
+│   │   ├── 0.jpg
+│   │   ├── 1.jpg
+│   │   ├── ...
+│   │   ├── T_1.jpg
+│   │   └── traj_data.pkl
+│   ├── <name_of_traj2>
+│   │   ├── 0.jpg
+│   │   ├── 1.jpg
+│   │   ├── ...
+│   │   ├── T_2.jpg
+│   │   └── traj_data.pkl
+│   ...
+|   ├── <name_of_trajN>
+|   | 	├── 0.jpg
+|   | 	├── 1.jpg
+|   | 	├── ...
+|   |   ├── T_N.jpg
+|   |   └── traj_data.pkl
+│   ├── train
+|   |   └── traj_names.txt
+└── └── test
+        └── traj_names.txt 
+``` 
 
 #### Training your model from a checkpoint
 Instead of training from scratch, you can also load an existing checkpoint from the published results.
