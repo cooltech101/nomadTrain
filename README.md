@@ -98,7 +98,7 @@ Each `*.jpg` file contains an forward-facing RGB observation from the robot, and
 - `"yaw"`: An np.ndarray [T,] of the yaws of the robot at each image observation.
 
 
-After step 2 of data processing, the processed data-split should the following structure inside `vint_release/train/vint_train/data/data_splits/`:
+After step 2 of data processing, the processed data-split should the following structure inside `/visualnav-transformer/train/vint_train/data/data_splits`:
 
 ```
 ├── <dataset_name>
@@ -150,7 +150,7 @@ Convert to ROS1 format
 rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 ```
 
-Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in /visualnav-transformer/train/vint_train/data/data_splits. 
+Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits`. 
 
 #### Training your model from a checkpoint
 Instead of training from scratch, you can also load an existing checkpoint from the published results.
