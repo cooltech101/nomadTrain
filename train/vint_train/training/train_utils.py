@@ -181,7 +181,7 @@ def train(
     wandb_log_freq: int = 10,
     image_log_freq: int = 1000,
     num_images_log: int = 8,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
     use_tqdm: bool = True,
 ):
     """
@@ -322,7 +322,7 @@ def evaluate(
     alpha: float = 0.5,
     learn_angle: bool = True,
     num_images_log: int = 8,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
     eval_fraction: float = 1.0,
     use_tqdm: bool = True,
 
@@ -1054,7 +1054,7 @@ def visualize_diffusion_action_distribution(
     epoch: int,
     num_images_log: int,
     num_samples: int = 30,
-    use_wandb: bool = True,
+    use_wandb: bool = False,
 ):
     """Plot samples from the exploration model."""
 

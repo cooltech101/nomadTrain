@@ -9,7 +9,7 @@ from vint_train.models.vint.self_attention import PositionalEncoding
 class NoMaD_ViNT(nn.Module):
     def __init__(
         self,
-        context_size: int = 5,
+        context_size: int = 3,
         obs_encoder: Optional[str] = "efficientnet-b0",
         obs_encoding_size: Optional[int] = 512,
         mha_num_attention_heads: Optional[int] = 2,
@@ -81,10 +81,15 @@ class NoMaD_ViNT(nn.Module):
             goal_mask = input_goal_mask.to(device)
 
         # Get the goal encoding
+        #print("nomad obs", obs_img.shape)
+        #print("nomad goal", goal_img.shape)
         obsgoal_img = torch.cat([obs_img[:, 3*self.context_size:, :, :], goal_img], dim=1) # concatenate the obs image/context and goal image --> non image goal?
+        #print("nomad obsgoal concat", obsgoal_img.shape)
         obsgoal_encoding = self.goal_encoder.extract_features(obsgoal_img) # get encoding of this img 
+        #print("nomad obsgoal encoded", obsgoal_encoding.shape)
         obsgoal_encoding = self.goal_encoder._avg_pooling(obsgoal_encoding) # avg pooling 
-        
+        #print("nomad pooled", obsgoal_encoding.shape)
+
         if self.goal_encoder._global_params.include_top:
             obsgoal_encoding = obsgoal_encoding.flatten(start_dim=1)
             obsgoal_encoding = self.goal_encoder._dropout(obsgoal_encoding)
@@ -94,6 +99,8 @@ class NoMaD_ViNT(nn.Module):
             obsgoal_encoding = obsgoal_encoding.unsqueeze(1)
         assert obsgoal_encoding.shape[2] == self.goal_encoding_size
         goal_encoding = obsgoal_encoding
+
+        #print("FINAL GOAL ENCODING", goal_encoding.shape)
         
         # Get the observation encoding
         obs_img = torch.split(obs_img, 3, dim=1)
@@ -108,7 +115,9 @@ class NoMaD_ViNT(nn.Module):
         obs_encoding = obs_encoding.unsqueeze(1)
         obs_encoding = obs_encoding.reshape((self.context_size+1, -1, self.obs_encoding_size))
         obs_encoding = torch.transpose(obs_encoding, 0, 1)
+        #print("FINAL OBS ENCODING", obs_encoding.shape)
         obs_encoding = torch.cat((obs_encoding, goal_encoding), dim=1)
+        #print("obs + goal encoded", obs_encoding.shape)
         
         # If a goal mask is provided, mask some of the goal tokens
         if goal_mask is not None:
@@ -126,6 +135,8 @@ class NoMaD_ViNT(nn.Module):
             avg_mask = torch.index_select(self.avg_pool_mask.to(device), 0, no_goal_mask).unsqueeze(-1)
             obs_encoding_tokens = obs_encoding_tokens * avg_mask
         obs_encoding_tokens = torch.mean(obs_encoding_tokens, dim=1)
+
+        #print("FINAL OBS + GOAL ENCODED", obs_encoding_tokens.shape)
 
         return obs_encoding_tokens
 
