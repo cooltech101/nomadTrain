@@ -137,6 +137,21 @@ Locate your training config file and add the following text under the `datasets`
     negative_mining: True # negative mining from the ViNG paper (Shah et al.)
 ```
 
+#### Collecting and processing custom ROS2 bags
+You can collect your own ROS2 bags from your robot embodiment for finetuning NoMaD. This can also be done in Isaac Sim environments. Collect the data in ROS2 format, then convert back to ROS1 format and process it as described above. 
+
+Record the image and odometry topics in ROS2 format.
+``` bash
+ros2 bag record <image topic> <odom topic>
+```
+
+Convert to ROS1 format
+``` bash
+rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
+```
+
+Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in /visualnav-transformer/train/vint_train/data/data_splits. 
+
 #### Training your model from a checkpoint
 Instead of training from scratch, you can also load an existing checkpoint from the published results.
 Add `load_run: <project_name>/<log_run_name>`to your .yaml config file in `vint_release/train/config/`. The `*.pth` of the file you are loading to be saved in this file structure and renamed to “latest”: `vint_release/train/logs/<project_name>/<log_run_name>/latest.pth`. This makes it easy to train from the checkpoint of a previous run since logs are saved this way by default. Note: if you are loading a checkpoint from a previous run, check for the name the run in the `vint_release/train/logs/<project_name>/`, since the code appends a string of the date to each run_name specified in the config yaml file of the run to avoid duplicate run names. 
@@ -151,29 +166,4 @@ Save the model weights *.pth file in `vint_release/deployment/model_weights` fol
 
 
 
-## Citing
-```
-@inproceedings{shah2022gnm,
-  author    = {Dhruv Shah and Ajay Sridhar and Arjun Bhorkar and Noriaki Hirose and Sergey Levine},
-  title     = {{GNM: A General Navigation Model to Drive Any Robot}},
-  booktitle = {International Conference on Robotics and Automation (ICRA)},
-  year      = {2023},
-  url       = {https://arxiv.org/abs/2210.03370}
-}
 
-@inproceedings{shah2023vint,
-  title     = {Vi{NT}: A Foundation Model for Visual Navigation},
-  author    = {Dhruv Shah and Ajay Sridhar and Nitish Dashora and Kyle Stachowicz and Kevin Black and Noriaki Hirose and Sergey Levine},
-  booktitle = {7th Annual Conference on Robot Learning},
-  year      = {2023},
-  url       = {https://arxiv.org/abs/2306.14846}
-}
-
-@article{sridhar2023nomad,
-  author  = {Ajay Sridhar and Dhruv Shah and Catherine Glossop and Sergey Levine},
-  title   = {{NoMaD: Goal Masked Diffusion Policies for Navigation and Exploration}},
-  journal = {arXiv pre-print},
-  year    = {2023},
-  url     = {https://arxiv.org/abs/2310.xxxx}
-}
-```
