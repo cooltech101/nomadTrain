@@ -138,19 +138,24 @@ Locate your training config file and add the following text under the `datasets`
 ```
 
 #### Collecting and processing custom ROS2 bags
-You can collect your own ROS2 bags from your robot embodiment for finetuning NoMaD. This can also be done in Isaac Sim environments. Collect the data in ROS2 format, then convert back to ROS1 format and process it as described above. 
+You can collect your own ROS2 bags from your robot embodiment for finetuning NoMaD. Use the ROS2 implementation found [here] (https://github.com/cooltech101/joeyNav). Collect the data in ROS2 format, then convert back to ROS1 format and process it as described above. 
 
-Record the image and odometry topics in ROS2 format.
+In an Ubuntu environment, record the image and odometry topics in ROS2 format.
 ``` bash
 ros2 bag record <image topic> <odom topic>
 ```
 
-Convert to ROS1 format
+Install the rosbags package. This package contains tools to convert rosbags between ROS1 and ROS2 formats. 
+``` bash
+pip install rosbags
+```
+
+Convert to ROS1 format.
 ``` bash
 rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 ```
 
-Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits`. Move the results of process_bags.py to this folder. The structure should be as follows:
+Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits/<dataset_name>`. Move the results of process_bags.py to this folder. The structure should be as follows:
 ```
 ├── <dataset_name>
 │   ├── <name_of_traj1>
