@@ -151,7 +151,7 @@ Convert to ROS1 format.
 rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 ```
 
-Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits/<dataset_name>`. 
+Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits/<dataset_name>`. Ensure to add the relevant configurations described in the "Custom Datasets" section. 
 
 #### Training your model from a checkpoint
 Instead of training from scratch, you can also load an existing checkpoint from the published results.
