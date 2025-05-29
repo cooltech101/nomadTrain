@@ -62,6 +62,8 @@ learn_angle: False
 
 # dataset specific parameters
 image_size: [160, 120] # width, height (change as needed)
+
+# filepaths to datasets. change as needed
 datasets:
   # recon:
   #   data_folder: /home/<username>/nomad_dataset/recon
@@ -98,10 +100,10 @@ datasets:
   #   end_slack: 3 # because many trajectories end in collisions
   #   goals_per_obs: 1
   #   negative_mining: True
-  joey: # custom dataset
-    data_folder: D:\visualnav-transformer\vint_train\data\data_splits\joey
-    train: D:\visualnav-transformer\vint_train\data\data_splits\joey\train
-    test: D:\visualnav-transformer\vint_train\data\data_splits\joey\test
+  joey: # filepath to custom dataset
+    data_folder: D:\visualnav-transformer\train\vint_train\data\data_splits\joey
+    train: D:\visualnav-transformer\train\vint_train\data\data_splits\joey\train
+    test: D:\visualnav-transformer\train\vint_train\data\data_splits\joey\test
     end_slack: 0
     goals_per_obs: 1
     negative_mining: True
