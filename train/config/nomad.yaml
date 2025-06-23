@@ -1,6 +1,6 @@
 project_name: nomad
 run_name: nomad
-load_run: nomad/2305 # path to desired pretrained weights
+#load_run: nomad/dir_name # path to desired pretrained weights
 
 # training setup
 use_wandb: False # set to false if you don't want to log to wandb
