@@ -141,7 +141,7 @@ rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits/<dataset_name>`. Ensure to add the relevant configurations described in the "Custom Datasets" section. 
 
 #### Custom Datasets
-It is critical that the average distance between waypoints in the dataset be entered as accurately as possible for optimal training results. To this end, try to maintain consistent linear velocity throughout the recorded trajectories. Upon completing the recordings, use getspacing.py on a few ros2bags to get a good estimate of the average distance between waypoints.
+It is critical that the average distance between waypoints in the dataset be entered as accurately as possible for optimal training results. To this end, try to maintain consistent linear velocity throughout the recorded trajectories. Upon completing the recordings, use train/getspacing.py on a few ros2bags to get a good estimate of the average distance between waypoints.
 ```bash
 python getspacing.py <path to ros2bag directory>
 ```
