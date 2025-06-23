@@ -62,7 +62,13 @@ We recommend you to download these (and any other datasets you may want to train
 
 We provide some sample scripts to process these datasets, either directly from a rosbag or from a custom format like HDF5s:
 1. Run `process_bags.py` with the relevant args, or `process_recon.py` for processing RECON HDF5s. You can also manually add your own dataset by following our structure below (if you are adding a custom dataset, please checkout the [Custom Datasets](#custom-datasets) section).
+```bash
+python process_bags.py --dataset-name <dataset name> --input-dir <path to input directory> --output-dir <path to output directory>
+```
 2. Run `data_split.py` on your dataset folder with the relevant args.
+```bash
+python data_split.py -i <path to input directory> -d <dataset name>
+```
 
 After step 1 of data processing, the processed dataset should have the following structure:
 
@@ -107,6 +113,7 @@ After step 2 of data processing, the processed data-split should the following s
 ### Training your General Navigation Models
 Run this inside the `vint_release/train` directory:
 ```bash
+set KMP_DUPLICATE_LIB_OK=TRUE
 python train.py -c <path_of_train_config_file>
 ```
 The premade config yaml files are in the `train/config` directory. 
