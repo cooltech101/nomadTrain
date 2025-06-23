@@ -138,6 +138,8 @@ Convert to ROS1 format.
 rosbags-convert --src <path to ROS2 bag dir> --dst <name the new ROS1 bag>
 ```
 
+By default, the recorded ros2bag directories will be named by their timestamp. Consider renaming the directories for easier tracking, file conversion and file transfer. 
+
 Process the ROS1 bags using process_bags.py and data_split.py. The results of data_split.py will be found in `/visualnav-transformer/train/vint_train/data/data_splits/<dataset_name>`. Ensure to add the relevant configurations described in the "Custom Datasets" section. 
 
 #### Custom Datasets
